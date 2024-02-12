@@ -64,7 +64,6 @@ IAM instance profile: EC2ASforSQS (ruolo creato nella sezione IAM)
 
 User data:
 “`
-
 #!/bin/bash
 sudo su - ec2-user
 sudo yum install -y python3-pip  # Installa pip3
@@ -74,7 +73,6 @@ sudo pip3 install time        # Installa la libreria time
 aws s3 cp s3://bucketsqs/script_sqs/consumer.py /home/ec2-user/consumer.py
 chmod +x /home/ec2-user/consumer.py
 python3 /home/ec2-user/consumer.py 
-
 “`
 
 -Premi su “Create launch template”.
