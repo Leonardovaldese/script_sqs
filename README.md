@@ -3,7 +3,7 @@
 Questa documentazione illustra i passaggi necessari per creare e utilizzare una coda Amazon SQS standard, un gruppo di Auto Scaling EC2,bucket S3 e una funzione Lambda e la configurazione dei ruoli all’interno di IAM.  
 Inoltre, descrive la funzione Lambda “producer” per l'invio di messaggi e uno script “consumer” scaricato da un bucket S3 per il processo di polling e stampa del messaggio mandato.
 
-# Definizione dei Ruoli IAM e delle Relative Policy(IAM1.png,IAM2.png,IAM3.png)
+# Definizione dei Ruoli IAM e delle Relative Policy(IAM1.png,IAM2.png,IAM3.png,IAM4.png)
 1. Accedi alla Console di Gestione AWS.
 2. Nella barra di ricerca dei servizi, digita "IAM" e seleziona IAM dalla lista dei servizi disponibili.
 3. Clicca su "Roles" nel menu di sinistra e successivamente su "Create role".
