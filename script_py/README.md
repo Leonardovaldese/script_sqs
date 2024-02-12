@@ -1,4 +1,4 @@
-PRODUCER.PY
+CONSUMER.PY
 
 
 Questo codice Python si occupa di monitorare una coda Amazon Simple Queue Service (SQS) e di gestire l'autoscaling in base al numero di messaggi presenti nella coda. 
