@@ -13,19 +13,19 @@ Inoltre, descrive la funzione Lambda “producer” per l'invio di messaggi e un
 7. Una volta creato il ruolo, assegna il ruolo agli utenti o alle risorse che necessitano l’accesso.
 Questa procedura verrà ripetuta per ogni servizio che usufruiremo di conseguenza scrivo per ogni servizio il nome e le policy del ruolo creato:
 
-servizio:EC2 Auto-Scaling
-nome ruolo: EC2ASforSQS
+servizio:EC2 Auto-Scaling;
+nome ruolo: EC2ASforSQS;
 Policy:
-AutoScalingFullAccess
-AmazonSQSFullAccess
+AutoScalingFullAccess;
+AmazonSQSFullAccess;
 AmazonS3FullAccess
 
 servizio:LAMBDA
-nome ruolo: LAforSQS
+nome ruolo: LAforSQS;
 Policy:
-AutoScalingConsoleFullAccess
-AmazonSQSFullAccess
-CloudWatchFullAccess
+AutoScalingConsoleFullAccess;
+AmazonSQSFullAccess;
+CloudWatchFullAccess;
 AWSLambda_FullAccess
 
 # Creazione di una coda Amazon SQS (SQS1.png)
