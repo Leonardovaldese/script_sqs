@@ -1,4 +1,6 @@
-producer.py
+PRODUCER.PY
+
+
 Questo codice Python si occupa di monitorare una coda Amazon Simple Queue Service (SQS) e di gestire l'autoscaling in base al numero di messaggi presenti nella coda. 
 Il codice importa le librerie necessarie, tra cui `boto3` per interagire con i servizi AWS, `json` per la manipolazione dei dati JSON e `time` per la gestione del tempo.
 Viene configurata la coda SQS di interesse, specificando l'URL della coda (`queue_url`) e la regione AWS (`region`). 
