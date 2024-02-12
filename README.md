@@ -111,4 +111,14 @@ python3 /home/ec2-user/consumer.py
 5. Una volta configurati tutti i campi necessari, clicca su "Create function" per completare la creazione della funzione Lambda.
 6. Aggiungi la destinazione dello script direttamente ad MySQS sia in condizione di On failure/On success
 7. Inserisci all’interno di lambda_function.py il codice scritto per producer.py
-8. Configuro il test event facendo “create new event” (esso viene usato per poter fare dei test del proprio script) 
+8. Configuro il test event facendo “create new event” (esso viene usato per poter fare dei test del proprio script)
+
+
+# RISULTATI DEI TEST(TEST1.png,TEST2.png)
+Dai risultati dei test emerge la corretta operatività del sistema. 
+Lo script producer.py  inserito in Lambda genera il messaggio JSON e attiva una prima istanza dell'Auto Scaling, inviandolo successivamente a SQS. 
+Al momento della creazione della prima istanza mediante i comandi forniti nell'User Data, 
+il sistema è in grado di scaricare le librerie necessarie e avviare il programma consumer.py dal bucket S3 all'interno dell'istanza. 
+Quest'ultimo monitora costantemente la coda di SQS, stampando i messaggi ricevuti e aggiornando dinamicamente il numero di istanze desiderate nell'Auto Scaling. 
+Tale valore può variare da un minimo di 0 a un massimo di 4 istanze, garantendo così una gestione flessibile e ottimale delle risorse.
+
