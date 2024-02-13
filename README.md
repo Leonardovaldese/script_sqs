@@ -116,7 +116,7 @@ User data:
 8. Configuro il test event facendo “create new event” (esso viene usato per poter fare dei test del proprio script)
 
 
-# RISULTATI DEI TEST(TEST1.png,TEST2.png)
+# RISULTATI DEI TEST(TEST.jpg)
 Dai risultati dei test emerge la corretta operatività del sistema. 
 Lo script producer.py  inserito in Lambda genera il messaggio JSON e attiva una prima istanza dell'Auto Scaling, inviandolo successivamente a SQS. 
 Al momento della creazione della prima istanza mediante i comandi forniti nell'User Data, 
