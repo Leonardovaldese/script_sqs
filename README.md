@@ -3,7 +3,7 @@
 Questa documentazione illustra i passaggi necessari per creare e utilizzare una coda Amazon SQS standard, un gruppo di Auto Scaling EC2,bucket S3 e una funzione Lambda e la configurazione dei ruoli all’interno di IAM.  
 Inoltre, descrive la funzione Lambda “producer” per l'invio di messaggi e uno script “consumer” scaricato da un bucket S3 per il processo di polling e stampa del messaggio mandato.
 
-# Definizione dei Ruoli IAM e delle Relative Policy(IAM1.png,IAM2.png,IAM3.png,IAM4.png)
+# Definizione dei Ruoli IAM e delle Relative Policy(IAM1.jpg,IAM2.jpg,IAM3.jpg,IAM4.jpg)
 1. Accedi alla Console di Gestione AWS.
 2. Nella barra di ricerca dei servizi, digita "IAM" e seleziona IAM dalla lista dei servizi disponibili.
 3. Clicca su "Roles" nel menu di sinistra e successivamente su "Create role".
@@ -28,7 +28,7 @@ AmazonSQSFullAccess;
 CloudWatchFullAccess;
 AWSLambda_FullAccess
 
-# Creazione di una coda Amazon SQS (SQS1.png)
+# Creazione di una coda Amazon SQS (SQS1.jpg,SQS2.jpg,SQS3.jpg)
 1. Accedi alla Console di Gestione AWS.
 2. Nella barra di ricerca dei servizi, digita "SQS" e seleziona Amazon SQS dalla lista dei servizi disponibili.
 3. Clicca sul pulsante "Create Queue" per iniziare il processo di creazione della coda SQS.
@@ -41,7 +41,7 @@ send/receive:Only the specified AWS accounts, IAM users and roles
 send:[inserisci l’arn  del ruolo dedicato alla lambda producer]
 receive:[inserisci l’arn del ruolo dedicato all’autoscaling/ec2]
 
-# Creazione del Launch Tamplates (LT1.png,LT2.png)
+# Creazione del Launch Tamplates (LT1.jpg,LT2.jpg,LT3.jpg,LT4.jpg,LT5.jpg,LT6.jpg,LT7.jpg,LT8.jpg)
 Prima di poter creare il gruppo di autoscaling bisogna creare Launch Tamplates nella quale si configura le EC2 che verranno create durante l’Autoscaling.
 1. Accedi alla Console di Gestione AWS.
 2. Nella barra di ricerca dei servizi, digita "EC2" e seleziona EC2 dalla lista dei servizi disponibili.
@@ -77,7 +77,7 @@ User data:
 
 -Premi su “Create launch template”.
 
-# Creazione Autoscaling Groups EC2 (AG1.png,AG2.png,AG3.png)
+# Creazione Autoscaling Groups EC2 (AG1.jpg,AG2.jpg,AG3.jpg,AG4.jpg)
 1.  Sulla dashboard di EC2 selezioniamo Auto Scaling Groups
 2. Clicca su “Create Autoscaling group”
 3. Definiamo i primi parametri:
@@ -89,7 +89,7 @@ User data:
   -Max desired capacity:4
 5. Clicca “NEXT” fino ad “REVIEW”, clicca Create Auto Scaling group.
 
-# Creazione bucket S3 (BS3.png,BS3_1.png)
+# Creazione bucket S3 (BS3.jpg,BS3_1.jpg,BS3_2.jpg)
 1.Nella console di gestione AWS, cerca e seleziona "Amazon S3" dal menu dei servizi.
 2.Nella pagina di Amazon S3, fai clic sul pulsante "Crea bucket" per iniziare il processo di creazione di un nuovo bucket.
 3.Configura le impostazioni del bucket:
@@ -101,7 +101,7 @@ User data:
 7. inserisci all’interno della cartella lo script  “consumer.py”
 
 
-# Creazione di una Funzione Lambda
+# Creazione di una Funzione Lambda (LMB1.jpg,LB2.jpg,LB3.jpg)
 1. Nella barra di ricerca dei servizi, digita "Lambda" e seleziona Lambda dalla lista dei servizi disponibili.
 2. Clicca sul pulsante "Create function" per iniziare il processo di creazione della funzione Lambda.
 3. Seleziona l'opzione "Author from scratch" per creare una nuova funzione Lambda da zero.
