@@ -27,10 +27,10 @@ Esempio di User Data:
 
 UserData:
  ` Fn::Base64: |
-    #!/bin/bash //
-    sudo su - ec2-user //
-    sudo yum install -y python3-pip //
-    sudo pip3 install boto3 //
-    aws s3 cp s3://<nome_del_bucket>/script_sqs/consumer.py /home/ec2-user/consumer.py  //
-    chmod +x /home/ec2-user/consumer.py //
+    #!/bin/bash /
+    sudo su - ec2-user /
+    sudo yum install -y python3-pip /
+    sudo pip3 install boto3 /
+    aws s3 cp s3://<nome_del_bucket>/script_sqs/consumer.py /home/ec2-user/consumer.py  /
+    chmod +x /home/ec2-user/consumer.py /
     python3 /home/ec2-user/consumer.py `
