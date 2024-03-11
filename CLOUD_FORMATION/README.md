@@ -1,4 +1,5 @@
 # README
+![template1-designer.png](.CLOUD_FORMATION/template1-designer.png)
 # Descrizione del File YAML
 Il file YAML contiene la definizione delle risorse AWS da creare utilizzando CloudFormation. Di seguito sono elencate le risorse principali e i loro ruoli all'interno dell'infrastruttura:
 
