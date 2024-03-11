@@ -1,4 +1,11 @@
 # README
+Questa cartella contiene tutti i file necessari per configurare e utilizzare il sistema di CloudFormation.
+
+## Contenuto della cartella:
+- *SQSY.yaml*
+- *template1-designer.png*
+- *consumer.py*
+- *producer-233332.zip*
 
 # Descrizione del File YAML
 Il file YAML contiene la definizione delle risorse AWS da creare utilizzando CloudFormation. Di seguito sono elencate le risorse principali e i loro ruoli all'interno dell'infrastruttura:
