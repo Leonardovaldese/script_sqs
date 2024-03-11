@@ -1,0 +1,263 @@
+
+Parameters:
+  S3BucketName:
+    Type: String
+    Description: Nome del bucket S3 nella quale si trova archiviato il codice Lambda
+    Default: "cf-templates-fl79ae7z7bd2-us-east-1"  # Modifica con il valore predefinito desiderato
+
+  DefaultUserData:
+    Type: String
+    Default: |
+      #!/bin/bash
+      sudo su - ec2-user 
+      # Installa le dipendenze necessarie 
+      sudo yum install -y python3-pip 
+      sudo pip3 install boto3 
+      # Scarica lo script da Amazon S3
+      aws s3 cp s3://cf-templates-fl79ae7z7bd2-us-east-1/script_sqs/consumer.py /home/ec2-user/consumer.py   
+      chmod +x /home/ec2-user/consumer.py 
+      python3 /home/ec2-user/consumer.py
+    Description: User Data per l'istanza EC2, modifica l'URL del file all'interno del bucket S3 con il proprio URL del file.
+
+
+Resources:
+  IAMLambdaRole:
+    Type: 'AWS::IAM::Role'
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: lambda.amazonaws.com
+            Action: 'sts:AssumeRole'
+      Policies:
+        - PolicyName: IAMLambdaPolicy
+          PolicyDocument:
+            Version: 2012-10-17
+            Statement:
+              - Effect: Allow
+                Action:
+                  - 's3:*'
+                  - 'sqs:*'
+                  - 'autoscaling:*'
+                  - 'lambda:*'
+                  - 'cloudwatch:*'
+                Resource: '*'
+                
+  AutoScalingRole:
+    Type: 'AWS::IAM::Role'
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: 'Allow'
+            Principal:
+              Service: 
+                - ec2.amazonaws.com
+                - ssm.amazonaws.com
+                - autoscaling.amazonaws.com
+            Action: 'sts:AssumeRole'
+      ManagedPolicyArns:
+       - arn:aws:iam::aws:policy/AmazonS3FullAccess
+       - arn:aws:iam::aws:policy/AmazonSQSFullAccess
+       - arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore
+       - arn:aws:iam::aws:policy/AutoScalingFullAccess
+       - arn:aws:iam::aws:policy/AmazonSSMFullAccess
+  
+
+  MyInstanceProfile:
+    Type: AWS::IAM::InstanceProfile
+    Properties:
+      Roles:
+        - !Ref AutoScalingRole
+
+
+  MyVPC1:
+    Type: 'AWS::EC2::VPC'
+    Properties:
+      CidrBlock: 10.0.0.0/16
+      EnableDnsSupport: true
+      EnableDnsHostnames: true
+      Tags:
+        - Key: Name
+          Value: MyVPC1
+
+  MyInternetGateway:
+    Type: 'AWS::EC2::InternetGateway'
+
+  MyVpcGatewayAttachment:
+    Type: 'AWS::EC2::VPCGatewayAttachment'
+    Properties:
+      VpcId: !Ref MyVPC1
+      InternetGatewayId: !Ref MyInternetGateway
+
+  MySubnet:
+    Type: 'AWS::EC2::Subnet'
+    Properties:
+      VpcId: !Ref MyVPC1
+      CidrBlock: 10.0.0.0/24
+      MapPublicIpOnLaunch: true
+
+  MyRouteTable:
+    Type: 'AWS::EC2::RouteTable'
+    Properties:
+      VpcId: !Ref MyVPC1
+
+  MyInternetRoute:
+    Type: 'AWS::EC2::Route'
+    DependsOn: MyVpcGatewayAttachment
+    Properties:
+      RouteTableId: !Ref MyRouteTable
+      DestinationCidrBlock: '0.0.0.0/0'
+      GatewayId: !Ref MyInternetGateway
+
+
+  MyVPCEndpoint:
+    Type: 'AWS::EC2::VPCEndpoint'
+    Properties:
+      VpcId: !Ref MyVPC1
+      ServiceName: !Sub 'com.amazonaws.${AWS::Region}.s3'
+      RouteTableIds:
+        - !Ref MyRouteTable
+
+  SubnetRouteTableAssociation:
+    Type: 'AWS::EC2::SubnetRouteTableAssociation'
+    Properties:
+      SubnetId: !Ref MySubnet
+      RouteTableId: !Ref MyRouteTable
+
+  MySecurityGroup:
+    Type: 'AWS::EC2::SecurityGroup'
+    Properties:
+      GroupDescription: Enable communication among services
+      VpcId: !Ref MyVPC1
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 443
+          ToPort: 443
+          CidrIp: 0.0.0.0/0  # Consentire l'accesso a S3 tramite HTTPS
+        - IpProtocol: tcp
+          FromPort: 80
+          ToPort: 80
+          CidrIp: 0.0.0.0/0  # Consentire l'accesso a S3 tramite HTTP
+        - IpProtocol: tcp
+          FromPort: 443
+          ToPort: 443
+          CidrIp: 0.0.0.0/0  # Consentire l'accesso a SQS tramite HTTPS
+        - IpProtocol: tcp
+          FromPort: 80
+          ToPort: 80
+          CidrIp: 0.0.0.0/0  # Consentire l'accesso a SQS tramite HTTP
+        - IpProtocol: tcp
+          FromPort: 22
+          ToPort: 22
+          CidrIp: 0.0.0.0/0  # Consentire l'accesso SSH da qualsiasi IP
+
+
+  MySQS1:
+    Type: 'AWS::SQS::Queue'
+    Properties:
+      QueueName: MySQS1
+      DelaySeconds: 0
+      MaximumMessageSize: 262144
+      MessageRetentionPeriod: 345600
+      ReceiveMessageWaitTimeSeconds: 20
+      VisibilityTimeout: 30
+ 
+ 
+  MyLambdaFunction:
+    Type: 'AWS::Lambda::Function'
+    Properties:
+      Handler: lambda_function.lambda_handler
+      Role: !GetAtt IAMLambdaRole.Arn
+      Code:
+        S3Bucket: !Ref S3BucketName  # Utilizza il valore del parametro per il nome del bucket
+        S3Key: script_sqs/producer-233332.zip
+      Runtime: python3.8
+      Environment:
+        Variables:
+          QUEUE_URL: !GetAtt MySQS1.QueueUrl
+ 
+  MyAutoScalingGroup1:
+    Type: 'AWS::AutoScaling::AutoScalingGroup'
+    Properties:
+      AutoScalingGroupName: MyAutoScalingGroup1
+      LaunchTemplate:
+        LaunchTemplateId: !Ref MyLaunchTemplate
+        Version: !GetAtt MyLaunchTemplate.LatestVersionNumber
+      MinSize: 0
+      MaxSize: 4
+      DesiredCapacity: 0
+      VPCZoneIdentifier:
+        - !Ref MySubnet
+
+  MyLaunchTemplate:
+    Type: 'AWS::EC2::LaunchTemplate'
+    Properties:
+      LaunchTemplateName: MyLaunchTemplate
+      VersionDescription: Initial version
+      LaunchTemplateData:
+        InstanceType: t2.micro
+        ImageId: "ami-0f403e3180720dd7e"
+        SecurityGroupIds:
+          - !Ref MySecurityGroup
+        IamInstanceProfile:
+          Arn: !GetAtt MyInstanceProfile.Arn
+        UserData:
+          Fn::Base64: !Ref DefaultUserData
+
+
+
+  MySQSAlarmOK:
+    Type: 'AWS::CloudWatch::Alarm'
+    Properties:
+      AlarmDescription: Alarm when ApproximateNumberOfMessagesVisible is 0
+      Namespace: AWS/SQS
+      MetricName: ApproximateNumberOfMessagesVisible
+      Dimensions:
+        - Name: QueueName
+          Value: !GetAtt MySQS1.QueueName
+      Statistic: Average
+      Period: 60
+      EvaluationPeriods: 1
+      Threshold: 0
+      ComparisonOperator: LessThanOrEqualToThreshold
+      AlarmActions:
+        - !Ref MyScalingPolicyNoInstances
+
+  MySQSAlarmAlarm:
+    Type: 'AWS::CloudWatch::Alarm'
+    Properties:
+      AlarmDescription: Alarm when ApproximateNumberOfMessagesVisible > 0
+      Namespace: AWS/SQS
+      MetricName: ApproximateNumberOfMessagesVisible
+      Dimensions:
+        - Name: QueueName
+          Value: !GetAtt MySQS1.QueueName
+      Statistic: Average
+      Period: 60
+      EvaluationPeriods: 1
+      Threshold: 1
+      ComparisonOperator: GreaterThanThreshold
+      AlarmActions:
+        - !Ref MyScalingPolicyIncreaseInstances
+
+
+  MyScalingPolicyNoInstances:
+    Type: 'AWS::AutoScaling::ScalingPolicy'
+    Properties:
+      PolicyName: MyScalingPolicyNoInstances
+      AdjustmentType: ExactCapacity
+      AutoScalingGroupName: !Ref MyAutoScalingGroup1
+      Cooldown: 60
+      ScalingAdjustment: 0
+
+  MyScalingPolicyIncreaseInstances:
+    Type: 'AWS::AutoScaling::ScalingPolicy'
+    Properties:
+      PolicyName: MyScalingPolicyIncreaseInstances
+      AdjustmentType: ChangeInCapacity
+      AutoScalingGroupName: !Ref MyAutoScalingGroup1
+      Cooldown: 60
+      ScalingAdjustment: 1
