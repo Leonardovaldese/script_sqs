@@ -4,13 +4,13 @@ Il file YAML contiene la definizione delle risorse AWS da creare utilizzando Clo
 
 **Parametri**: Definisce i parametri configurabili utilizzati durante la creazione dello stack CloudFormation.
 **Risorse**: Elenco delle risorse AWS create durante il deployment dello stack CloudFormation, tra cui:
-_Ruoli IAM_
-_VPC e relative subnet_
-_Gruppi di sicurezza_
-_Code SQS_
-_Funzioni Lambda_
-_Gruppi di Auto Scaling_
-_Allarmi di CloudWatch_
+- _Ruoli IAM_
+- _VPC e relative subnet_
+- _Gruppi di sicurezza_
+- _Code SQS_
+- _Funzioni Lambda_
+- _Gruppi di Auto Scaling_
+- _Allarmi di CloudWatch_
 
 ## Risorsa da creare
 - AWS S3 per l'archiviazione dei file
