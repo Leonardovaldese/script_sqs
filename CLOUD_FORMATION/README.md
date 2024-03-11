@@ -1,12 +1,18 @@
 # README
+# Descrizione del File YAML
+Il file YAML contiene la definizione delle risorse AWS da creare utilizzando CloudFormation. Di seguito sono elencate le risorse principali e i loro ruoli all'interno dell'infrastruttura:
 
-## Descrizione
-Questo progetto fornisce uno script per l'esecuzione di un'applicazione basata su AWS utilizzando EC2 e SQS. Lo script viene eseguito su un'istanza EC2 e consuma messaggi da una coda SQS.
+**Parametri**: Definisce i parametri configurabili utilizzati durante la creazione dello stack CloudFormation.
+**Risorse**: Elenco delle risorse AWS create durante il deployment dello stack CloudFormation, tra cui:
+_Ruoli IAM_
+_VPC e relative subnet_
+_Gruppi di sicurezza_
+_Code SQS_
+_Funzioni Lambda_
+_Gruppi di Auto Scaling_
+_Allarmi di CloudWatch_
 
-## Risorse Utilizzate
-- AWS autoscaling
-- AWS EC2 per l'istanza virtuale
-- AWS SQS per la coda dei messaggi
+## Risorsa da creare
 - AWS S3 per l'archiviazione dei file
 
 ## Preparazione
